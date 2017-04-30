@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Helpers for the custom CLEF eHealth Task 2 file formats
 
 """
@@ -128,7 +127,7 @@ if __name__ == "__main__":
         count += 1
         for k2, v2 in v.iteritems():
             if count <= 10:
-                print("{} - {} - {}...".format(k, k2, list(v2)[:5]))
+                print("{} - {} - {} ({}...)".format(k, k2, len(v2), list(v2)[:5]))
     print("...")
     print("topic count: {}".format(count))
     print("")
