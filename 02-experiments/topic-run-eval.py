@@ -9,6 +9,7 @@ import cet2_output
 import evals
 
 
+
 if __name__ == "__main__":
 
     #  Params
@@ -31,6 +32,6 @@ if __name__ == "__main__":
 
         # load the results?
         topic_run = runs[topic]
-        evals.cumulative_return(topic_run, topic_qrels)
+        evals.cumulative_return(topic_run, topic_qrels, debug=True)
 
         break
