@@ -1,0 +1,20 @@
+-----------------------------------------------------------------------
+:: CLEF 2017 Labs - eHealth Task 2 - team: WAX 
+-----------------------------------------------------------------------
+
+This repository contains the code and results from my work on the
+CLEF 2017 eHealth task 2 lab.
+
+
+./01-get-records/  -- Helpers for downloading pubmed abstract files
+./02-experiments/  -- Programs and library code for running experiments
+./results/         -- Output run files in trec run format
+
+
+
+
+
+
+
+
+-eof
