@@ -188,6 +188,7 @@ if __name__ == "__main__":
         ranking = zip(P, X_unk)
         ranking.sort(reverse=True)
 
+        # How to determine stop and/or convergence-like state?
         if (len(reviewed_pos) == len(qrel_pos_docids)) or (len(reviewed_not) < batch_count):
             review = False
 
