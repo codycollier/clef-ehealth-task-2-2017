@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-"""
+"""Run a simulation using decision tree classification and...
 
 
 ref:
     http://scikit-learn.org/stable/modules/feature_extraction.html
+    http://scikit-learn.org/stable/modules/tree.html
     http://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
+    http://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html
 """
 
 import random
