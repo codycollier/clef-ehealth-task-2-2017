@@ -88,11 +88,17 @@ def load_all_qrels(qrel_path):
     if not os.path.exists(qrel_path):
         raise ValueError("Not a valid qrel file path")
 
-    topic_qrels = defaultdict(dict)
+    topic_qrels = defaultdict(lambda: defaultdict(set))
     with open(qrel_path, 'r') as qrfile:
         for line in qrfile:
-            parts = line.strip().split()
-            topic_qrels[parts[0]][parts[2]] = int(parts[3])
+            # parts = line.strip().split()
+            topic, unk, pubmedid, pos = line.strip().split()
+            pos = int(pos)
+            topic_qrels[topic]['all'].add(pubmedid)
+            if pos:
+                topic_qrels[topic]['pos'].add(pubmedid)
+            else:
+                topic_qrels[topic]['neg'].add(pubmedid)
     return topic_qrels
 
 
@@ -109,6 +115,7 @@ if __name__ == "__main__":
     print("")
     print("topics to numbers:")
     print(topics_to_numbers)
+    print("topic count: {}".format(len(topics_to_numbers)))
     print("")
 
     # path = "../downloads/Training Data/qrel_content_train"
@@ -118,11 +125,12 @@ if __name__ == "__main__":
     print("topics to pubmed qrels:")
     count = 0
     for k, v in topic_qrels.iteritems():
+        count += 1
         for k2, v2 in v.iteritems():
-            count += 1
             if count <= 10:
-                print(k, k2, v2)
-    print(count)
+                print("{} - {} - {}...".format(k, k2, list(v2)[:5]))
+    print("...")
+    print("topic count: {}".format(count))
     print("")
 
 
