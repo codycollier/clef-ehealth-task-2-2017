@@ -17,6 +17,7 @@ if __name__ == "__main__":
     model = "dectree"
     path_docs = "../downloads/pubmed-docs-dev/"
     path_qrels = "../downloads/Training Data/qrel_abs_train"
+    run_out_path = "../output/"
 
     # Load the docids / qrels for all topics
     topic_qrels = cet2_inputs.load_all_qrels(path_qrels)
@@ -33,7 +34,7 @@ if __name__ == "__main__":
         print("")
 
         topic_lines = cet2_output.gen_trec_topic_run(topic, review_log, run_id=run_id, debug=True)
-        cet2_output.write_run_file(topic_lines, outpath="../output/", run_id=run_id, tag=tag)
+        cet2_output.write_run_file(topic_lines, outpath=run_out_path, run_id=run_id, tag=tag)
         print("")
         break
 
