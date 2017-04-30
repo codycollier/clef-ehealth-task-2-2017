@@ -8,6 +8,7 @@ ref:
 """
 
 import random
+import time
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.tree import DecisionTreeClassifier
@@ -119,6 +120,7 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=False):
     batch_count = 10
     empty_pos_rounds_max = 3
 
+    start = time.time()
     while keep_reviewing:
 
         review_round += 1
@@ -194,6 +196,7 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=False):
                 print(":::{}".format("-" * 80))
                 print("::: topic: {}  rounds: {}  reviewed: {} of {}".format(topic, review_round, len(reviewed_all), len(topic_docids)))
                 print("::: done reviewing: max rounds of empty positive docs in classification")
+                print("::: elapsed: {} s".format(time.time() - start))
                 print(":::{}".format("-" * 80))
 
 
@@ -210,5 +213,9 @@ if __name__ == "__main__":
         qrel_neg_docids = relsets['neg']
         topic_docids = relsets['all']
         run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=True)
-        break
+        print("")
+        print("")
+        print("")
+        print("")
+        # break
 
