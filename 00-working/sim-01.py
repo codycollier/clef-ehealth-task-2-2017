@@ -123,7 +123,7 @@ if __name__ == "__main__":
     review = True
     review_round = 0
     model_built = True
-    batch_count = 100
+    batch_count = 10
     min_pos = 1
     ranking = None
     debug = True
@@ -150,12 +150,22 @@ if __name__ == "__main__":
                         if found_pos >= min_pos:
                             break
 
-        # In other rounds, take the top N from the list
+        # In other rounds, take all the pos predictions or at least topN
         else:
+            # ...top N from the list
             topN = zip(*ranking[:batch_count])[1]
-            reviewed_this_round.extend(topN)
             if debug:
                 print("topN:", topN)
+
+            # ...the pos predictions
+            posN = [docid for pred, docid in ranking if pred == 1]
+            if debug:
+                print("posN:", posN)
+
+            if len(posN) > len(topN):
+                reviewed_this_round.extend(posN)
+            else:
+                reviewed_this_round.extend(topN)
 
         # Collect the reviewed docs
         for d in reviewed_this_round:
