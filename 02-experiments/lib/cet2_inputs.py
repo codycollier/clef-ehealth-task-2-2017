@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Helpers for the custom CLEF eHealth Task 2 file formats
 
 """

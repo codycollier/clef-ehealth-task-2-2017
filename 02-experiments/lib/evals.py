@@ -9,13 +9,21 @@ ref:
 """
 
 
-def cumulative_return(topic_run, topic_qrels):
-    pass
-
+def cumulative_return(topic_run, topic_qrels, debug=False):
+    """Calculate cumulative return for a topic run ranking"""
+    # cr = [(rank, cr), ...]
+    cr_list = []
+    cr = 0
+    for docid, rank, score in topic_run:
+        if docid in topic_qrels['pos']:
+            cr += 1
+        cr_list.append((rank, cr))
+    return cr_list
 
 
 if __name__ == "__main__":
 
     # ad hoc testing if called directly
+    pass
 
 
