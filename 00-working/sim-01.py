@@ -14,7 +14,8 @@ import sys
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.tree import DecisionTreeClassifier
 
-import cet2_files
+import cet2_inputs
+import cet2_output
 
 
 def file_paths(docids, dpath):
@@ -205,7 +206,7 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=False):
             sys.stdout.flush()
 
     # end of topic reviewing
-    return
+    return review_log, reviewed_not, reviewed_all, reviewed_pos, reviewed_neg
 
 
 if __name__ == "__main__":
@@ -213,15 +214,25 @@ if __name__ == "__main__":
     # --------------------------------------------------------------
     #  Load all the docs from a topic, then run the sim
     # --------------------------------------------------------------
+    run_id = "Test-A"
+    tag = "WAX-dev"
+
     path_docs = "../downloads/pubmed-docs-dev/"
     path_qrels = "../downloads/Training Data/qrel_abs_train"
-    topic_qrels = cet2_files.load_all_qrels(path_qrels)
+
+    topic_qrels = cet2_inputs.load_all_qrels(path_qrels)
+
     for topic, relsets in topic_qrels.iteritems():
         qrel_pos_docids = relsets['pos']
         qrel_neg_docids = relsets['neg']
         topic_docids = relsets['all']
-        run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=True)
+        results = run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=True)
+        review_log, reviewed_not, reviewed_all, reviewed_pos, reviewed_neg = results
         print("")
+        print("")
+        print("")
+        topic_lines = cet2_output.gen_trec_topic_run(topic, review_log, run_id=run_id)
+        cet2_output.write_run_file(topic_lines, outpath="../output/", run_id=run_id, tag=tag)
         print("")
         print("")
         print("")
