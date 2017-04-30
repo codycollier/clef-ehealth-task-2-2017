@@ -1,0 +1,15 @@
+#
+# Setup python paths etc
+#
+# Usage:
+#    source ./setup_python_env
+#
+#
+
+# move to the root of the project
+cd $(dirname ${BASH_SOURCE[0]})
+root=$(pwd)
+
+# add the main lib and tests to the path
+PYTHONPATH="$PYTHONPATH:$root/lib/"
+export PYTHONPATH
