@@ -107,7 +107,7 @@ def build_model_and_rank(pos, neg, unk, docpath, model="dectree", debug=False):
     return (unk_docids, P)
 
 
-def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=False):
+def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, model="dectree", debug=False):
     """Run a simulation of a review for a given topic
 
     """
@@ -187,7 +187,7 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=False):
             print("reviewed_pos: {}".format(len(reviewed_pos)))
             print("reviewed_neg: {}".format(len(reviewed_neg)))
 
-        X_unk, P = build_model_and_rank(reviewed_pos, reviewed_neg, reviewed_not, path_docs, debug=False)
+        X_unk, P = build_model_and_rank(reviewed_pos, reviewed_neg, reviewed_not, path_docs, model, debug=False)
         classification = zip(P, X_unk)
         classification.sort(reverse=True)
 
@@ -221,6 +221,7 @@ if __name__ == "__main__":
     # --------------------------------------------------------------
     run_id = "Test-A"
     tag = "WAX-dev"
+    model = "dectree"
 
     path_docs = "../downloads/pubmed-docs-dev/"
     path_qrels = "../downloads/Training Data/qrel_abs_train"
@@ -231,7 +232,7 @@ if __name__ == "__main__":
         qrel_pos_docids = relsets['pos']
         qrel_neg_docids = relsets['neg']
         topic_docids = relsets['all']
-        results = run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=True)
+        results = run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, model=model, debug=True)
         review_log, reviewed_not, reviewed_all, reviewed_pos, reviewed_neg = results
         print("")
         print("")
