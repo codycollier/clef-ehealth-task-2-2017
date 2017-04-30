@@ -99,41 +99,32 @@ def build_model_and_rank(pos, neg, unk, docpath, debug=False):
     return (unk_docids, P)
 
 
-if __name__ == "__main__":
+def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=False):
+    """Run a simulation of a review for a given topic
 
-    # --------------------------------------------------------------
-    #  Load all the docs from a topic
-    # --------------------------------------------------------------
-    path_docs = "../downloads/pubmed-docs-dev/"
-    path_qrels = "../downloads/Training Data/qrel_abs_train"
-    topic_qrels = cet2.load_all_qrels(path_qrels)
-    for topic, relsets in topic_qrels.iteritems():
-        qrel_pos_docids = relsets['pos']
-        qrel_neg_docids = relsets['neg']
-        topic_docids = relsets['all']
-        break
+    """
 
-    # --------------------------------------------------------------
-    #  Run the experiment
-    # --------------------------------------------------------------
     review_log = []
     reviewed_all = set()
     reviewed_pos = set()
     reviewed_neg = set()
-    review = True
     review_round = 0
-    model_built = True
-    batch_count = 10
-    min_pos = 1
-    ranking = None
-    debug = True
+    empty_pos_rounds = 0
+    classification = []
+    keep_reviewing = True
 
-    while review:
+    # key parameters
+    debug = True
+    min_pos = 1
+    batch_count = 10
+    empty_pos_rounds_max = 3
+
+    while keep_reviewing:
 
         review_round += 1
         if debug:
             print("::{}".format("-" * 80))
-            print("::  Review Round: {}".format(review_round))
+            print("::  {} - Review Round: {}".format(topic, review_round))
             print("::{}".format("-" * 80))
 
         reviewed_this_round = []
@@ -143,7 +134,6 @@ if __name__ == "__main__":
             found_pos = 0
             while found_pos < min_pos:
                 reviewed_this_round.extend(random.sample(topic_docids, batch_count))
-                pcount = 0
                 for d in reviewed_this_round:
                     if d in qrel_pos_docids:
                         found_pos += 1
@@ -153,12 +143,16 @@ if __name__ == "__main__":
         # In other rounds, take all the pos predictions or at least topN
         else:
             # ...top N from the list
-            topN = zip(*ranking[:batch_count])[1]
+            topN = zip(*classification[:batch_count])[1]
             if debug:
                 print("topN:", topN)
 
             # ...the pos predictions
-            posN = [docid for pred, docid in ranking if pred == 1]
+            posN = [docid for pred, docid in classification if pred == 1]
+            if len(posN) == 0:
+                empty_pos_rounds += 1
+            else:
+                empty_pos_rounds = 0
             if debug:
                 print("posN:", posN)
 
@@ -185,10 +179,36 @@ if __name__ == "__main__":
             print("reviewed_neg: {}".format(len(reviewed_neg)))
 
         X_unk, P = build_model_and_rank(reviewed_pos, reviewed_neg, reviewed_not, path_docs, debug=False)
-        ranking = zip(P, X_unk)
-        ranking.sort(reverse=True)
+        classification = zip(P, X_unk)
+        classification.sort(reverse=True)
 
         # How to determine stop and/or convergence-like state?
-        if (len(reviewed_pos) == len(qrel_pos_docids)) or (len(reviewed_not) < batch_count):
-            review = False
+        if len(reviewed_not) < batch_count:
+            keep_reviewing = False
+            if debug:
+                print("done reviewing: less than a full batch of docs left")
+
+        elif empty_pos_rounds >= empty_pos_rounds_max:
+            keep_reviewing = False
+            if debug:
+                print(":::{}".format("-" * 80))
+                print("::: topic: {}  rounds: {}  reviewed: {} of {}".format(topic, review_round, len(reviewed_all), len(topic_docids)))
+                print("::: done reviewing: max rounds of empty positive docs in classification")
+                print(":::{}".format("-" * 80))
+
+
+if __name__ == "__main__":
+
+    # --------------------------------------------------------------
+    #  Load all the docs from a topic, then run the sim
+    # --------------------------------------------------------------
+    path_docs = "../downloads/pubmed-docs-dev/"
+    path_qrels = "../downloads/Training Data/qrel_abs_train"
+    topic_qrels = cet2.load_all_qrels(path_qrels)
+    for topic, relsets in topic_qrels.iteritems():
+        qrel_pos_docids = relsets['pos']
+        qrel_neg_docids = relsets['neg']
+        topic_docids = relsets['all']
+        run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=True)
+        break
 
