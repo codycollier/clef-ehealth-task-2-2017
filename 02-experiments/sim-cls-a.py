@@ -216,9 +216,7 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, model="dectre
 
 if __name__ == "__main__":
 
-    # --------------------------------------------------------------
-    #  Load all the docs from a topic, then run the sim
-    # --------------------------------------------------------------
+    #  Params
     run_id = "Test-A"
     tag = "WAX-dev"
     model = "dectree"
@@ -226,14 +224,18 @@ if __name__ == "__main__":
     path_docs = "../downloads/pubmed-docs-dev/"
     path_qrels = "../downloads/Training Data/qrel_abs_train"
 
+    # Load the docids / qrels for all topics
     topic_qrels = cet2_inputs.load_all_qrels(path_qrels)
 
-    for topic, relsets in topic_qrels.iteritems():
-        qrel_pos_docids = relsets['pos']
-        qrel_neg_docids = relsets['neg']
-        topic_docids = relsets['all']
+    # Run simulation for each topic
+    for topic, qrelsets in topic_qrels.iteritems():
+        qrel_pos_docids = qrelsets['pos']
+        qrel_neg_docids = qrelsets['neg']
+        topic_docids = qrelsets['all']
+
         results = run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, model=model, debug=True)
         review_log, reviewed_not, reviewed_all, reviewed_pos, reviewed_neg = results
+
         print("")
         print("")
         print("")
