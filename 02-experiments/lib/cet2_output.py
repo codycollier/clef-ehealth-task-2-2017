@@ -9,7 +9,7 @@ import os
 import os.path
 
 
-def gen_trec_topic_run(topic, reviewed_docs, run_id):
+def gen_trec_topic_run(topic, reviewed_docs, run_id, debug=False):
     """Generate the ranked list and metadata for a single topic
 
     Run Format : TOPIC-ID    INTERACTION    PID    RANK    SCORE    RUN-ID
@@ -31,8 +31,9 @@ def gen_trec_topic_run(topic, reviewed_docs, run_id):
     for rank, pubmedid in enumerate(reviewed_docs):
         score = 100 * (1.0 / (rank + 1))
         line = "{} {} {} {} {} {}".format(topic, "AF", pubmedid, rank, score, run_id)
-        print(line)
         lines.append(line)
+        if debug:
+            print(line)
     return lines
 
 
