@@ -9,7 +9,6 @@ import cet2_output
 import evals
 
 
-
 if __name__ == "__main__":
 
     #  Params
@@ -21,7 +20,7 @@ if __name__ == "__main__":
 
     # Load the docids / qrels for all topics
     topic_qrels = cet2_inputs.load_all_qrels(path_qrels)
-    runs = load_run_file(outpath=run_out_path, run_id=run_id, tag=tag)
+    runs = cet2_output.load_run_file(outpath=run_out_path, run_id=run_id, tag=tag)
 
     # Run simulation for each topic
     for topic, qrelsets in topic_qrels.iteritems():
@@ -32,6 +31,7 @@ if __name__ == "__main__":
 
         # load the results?
         topic_run = runs[topic]
-        evals.cumulative_return(topic_run, topic_qrels, debug=True)
+        cr = evals.cumulative_return(topic_run, topic_qrels, debug=True)
+        evals.plot_topic_cumulative_recall(cr, topic, run_id, out_directory=None)
 
         break
