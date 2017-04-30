@@ -104,15 +104,15 @@ if __name__ == "__main__":
     # 4.7M    ../Training Data/qrel_content_train
     # 1.9M    ../Training Data/topics_train
 
-    path = "../Training Data/topics_train/"
+    path = "../downloads/Training Data/topics_train/"
     topics_to_numbers = load_topic_numbers(path)
     print("")
     print("topics to numbers:")
     print(topics_to_numbers)
     print("")
 
-    # path = "../Training Data/qrel_content_train"
-    path = "../Training Data/qrel_abs_train"
+    # path = "../downloads/Training Data/qrel_content_train"
+    path = "../downloads/Training Data/qrel_abs_train"
     topic_qrels = load_all_qrels(path)
     print("")
     print("topics to pubmed qrels:")
