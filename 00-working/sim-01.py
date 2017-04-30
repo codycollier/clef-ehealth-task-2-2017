@@ -9,11 +9,12 @@ ref:
 
 import random
 import time
+import sys
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.tree import DecisionTreeClassifier
 
-import cet2
+import cet2_files
 
 
 def file_paths(docids, dpath):
@@ -199,6 +200,13 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, debug=False):
                 print("::: elapsed: {} s".format(time.time() - start))
                 print(":::{}".format("-" * 80))
 
+        # end of round
+        if debug:
+            sys.stdout.flush()
+
+    # end of topic reviewing
+    return
+
 
 if __name__ == "__main__":
 
@@ -207,7 +215,7 @@ if __name__ == "__main__":
     # --------------------------------------------------------------
     path_docs = "../downloads/pubmed-docs-dev/"
     path_qrels = "../downloads/Training Data/qrel_abs_train"
-    topic_qrels = cet2.load_all_qrels(path_qrels)
+    topic_qrels = cet2_files.load_all_qrels(path_qrels)
     for topic, relsets in topic_qrels.iteritems():
         qrel_pos_docids = relsets['pos']
         qrel_neg_docids = relsets['neg']
@@ -217,5 +225,5 @@ if __name__ == "__main__":
         print("")
         print("")
         print("")
-        # break
+        break
 
