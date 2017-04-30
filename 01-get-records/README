@@ -1,0 +1,47 @@
+----------------------------------------------------------------------
+:: Step 1 - retrieving pubmed ids
+:: Instructions / notes on collecting the working data set(s)
+----------------------------------------------------------------------
+
+Note:
+Some notes below were edited after the fact, as a part of refactoring
+the download helper tools and moving everything into a common
+downloads folder.
+
+
+
+# --------------------------------------------------------------
+# (train/dev set) - get the list of unique pubmed ids
+# --------------------------------------------------------------
+
+(py27) [rain 01-get-records]$./01-get-unique-pubmed-ids-dev.sh
+-rw-r--r--  1 cmc  staff  1079887 Mar 23 23:54 list-of-pubmed-ids-dev
+
+
+# --------------------------------------------------------------
+# (train/dev set) - run the download utility
+# --------------------------------------------------------------
+(py27) [rain 01-get-records]$./02-download-pubmed-docs.py ./list-of-pubmed-ids-dev ../downloads/pubmed-docs-dev/
+
+# confirmation of counts:
+
+[rain 01-get-records]$wc -l list-of-pubmed-ids-dev
+  125467 list-of-pubmed-ids-dev
+[rain 01-get-records]$find ../downloads/pubmed-docs-dev/ -type f | wc -l
+  125467
+
+[rain 01-get-records]$du -sh ../downloads/pubmed-docs-dev/
+509M    ./pubmed-docs-dev/
+
+
+# --------------------------------------------------------------
+# (test set) - get list of unique pubmed ids
+# --------------------------------------------------------------
+
+# --------------------------------------------------------------
+# (test set) - run the download utility
+# --------------------------------------------------------------
+
+
+
+-eof
