@@ -6,6 +6,7 @@ ref:
 
 import os
 import os.path
+from collections import defaultdict
 
 
 def gen_trec_topic_run(topic, reviewed_docs, run_id, debug=False):
@@ -45,6 +46,7 @@ def write_run_file(topic_lines, outpath="../output/", run_id="", tag="WAX-dev"):
     outfile = os.path.join(outpath, "run-file-{}-{}.txt".format(tag, run_id))
     with open(outfile, 'a') as out:
         out.write("\n".join(topic_lines))
+        out.write("\n")
 
 
 def load_run_file(outpath="../output/", run_id="", tag="WAX-dev"):
@@ -56,10 +58,10 @@ def load_run_file(outpath="../output/", run_id="", tag="WAX-dev"):
 
     runs = defaultdict(list)
     with open(runfile, 'r') as run:
-        current_topic = None
         for line in run:
-            parts = line.split("")
-            # Run Format : TOPIC-ID    INTERACTION    PID    RANK    SCORE    RUN-ID
+            parts = line.strip().split(" ")
+            # TOPIC-ID    INTERACTION    PID    RANK    SCORE    RUN-ID
+            # CD009944 AF 17679360 0 100.0 Test-A
             topic, interaction, pid, rank, score, runid = parts
             runs[topic].append((pid, rank, score))
     return runs
