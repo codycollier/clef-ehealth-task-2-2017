@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Run a simulation using decision tree classification and...
+"""Run a simulation using classification model(s) and...
 
 
 ref:
@@ -33,8 +33,8 @@ def file_handles(docs):
         yield open(doc, 'r')
 
 
-def build_model_and_rank(pos, neg, unk, docpath, debug=False):
-    """Build a model from the pos/neg docs and rank the unknown docs
+def build_model_and_rank(pos, neg, unk, docpath, model="dectree", debug=False):
+    """Build a classifier from the pos/neg docs and rank the unknown docs
 
     """
 
@@ -77,8 +77,11 @@ def build_model_and_rank(pos, neg, unk, docpath, debug=False):
     # --------------------------------------------------------------
     #  Build the model from the labeled docs
     # --------------------------------------------------------------
-    m = DecisionTreeClassifier()
-    m.fit(X_lab, Y_lab)
+    if model == "dectree":
+        m = DecisionTreeClassifier()
+        m.fit(X_lab, Y_lab)
+    else:
+        raise Exception("Invalid model selection")
 
     # --------------------------------------------------------------
     #  DEBUG - pos should be predictid pos
