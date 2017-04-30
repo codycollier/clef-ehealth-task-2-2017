@@ -1,8 +1,11 @@
 -----------------------------------------------------------------------
-:: CLEF eHealth Task 2 (WAX)
+:: CLEF 2017 Labs - eHealth Task 2 - team: WAX
+::
+:: 02 - experiments
+:: Notes and details for running the experiments
+::
 -----------------------------------------------------------------------
 
-Notes and details for running the experiments
 
 
 --------------------------------------------------------------
@@ -12,19 +15,23 @@ Notes and details for running the experiments
 1. The Dev / Test downloads from task 2 should exist in ../downloads/
 
 2. The pubmed abstract + metadata files should be downloaded and exist
-   in ../downloads/ as well.  (use scripts in ../01-get-records/)
+   in ../downloads/ as well.
+   (see scripts in ../01-get-records/)
 
 
 ------------------------------------
-:: setup
+:: sofware
 ------------------------------------
 
-pre-reqs / versions of software used:
 . Python 2.7.13 :: Anaconda 2.5.0 (x86_64)
 . scikit-learn 0.18.1
 . matplotlib 2.0.0
 
-Preparing for running programs:
+
+------------------------------------
+:: setup and run
+------------------------------------
+
 $ cd .
 $ source ./setup_python_env
 
