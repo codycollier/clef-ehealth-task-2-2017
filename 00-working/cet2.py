@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Helpers for the custom CLEF eHealth Task 2 file formats
 
 """
@@ -123,12 +124,13 @@ if __name__ == "__main__":
     print("")
     print("topics to pubmed qrels:")
     count = 0
-    for k, v in topic_qrels.iteritems():
+    for topic, qrels in topic_qrels.iteritems():
         count += 1
-        for k2, v2 in v.iteritems():
-            if count <= 10:
-                print("{} - {} - {} ({}...)".format(k, k2, len(v2), list(v2)[:5]))
-    print("...")
+        print("")
+        for qtype in ('all', 'neg', 'pos'):
+            qr_docids = qrels[qtype]
+            print("{} - {} - {} ({}...)".format(topic, qtype, len(qr_docids), list(qr_docids)[:5]))
+    print("")
     print("topic count: {}".format(count))
     print("")
 
