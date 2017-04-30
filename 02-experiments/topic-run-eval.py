@@ -23,15 +23,10 @@ if __name__ == "__main__":
     runs = cet2_output.load_run_file(outpath=run_out_path, run_id=run_id, tag=tag)
 
     # Run simulation for each topic
-    for topic, qrelsets in topic_qrels.iteritems():
+    for topic, topic_qrelsets in topic_qrels.iteritems():
 
-        qrel_pos_docids = qrelsets['pos']
-        qrel_neg_docids = qrelsets['neg']
-        topic_docids = qrelsets['all']
-
-        # load the results?
         topic_run = runs[topic]
-        cr = evals.cumulative_return(topic_run, topic_qrels, debug=True)
+        cr = evals.cumulative_return(topic_run, topic_qrelsets, debug=False)
         evals.plot_topic_cumulative_recall(cr, topic, run_id, out_directory=None)
 
         break

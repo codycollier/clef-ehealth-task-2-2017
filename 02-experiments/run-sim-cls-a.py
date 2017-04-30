@@ -29,12 +29,11 @@ if __name__ == "__main__":
         qrel_neg_docids = qrelsets['neg']
         topic_docids = qrelsets['all']
 
-        results = core_cls.run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, model=model, debug=True)
+        results = core_cls.run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs=path_docs, model=model, debug=True)
         review_log, reviewed_not, reviewed_all, reviewed_pos, reviewed_neg = results
         print("")
 
         topic_lines = cet2_output.gen_trec_topic_run(topic, review_log, run_id=run_id, debug=True)
         cet2_output.write_run_file(topic_lines, outpath=run_out_path, run_id=run_id, tag=tag)
         print("")
-        break
 

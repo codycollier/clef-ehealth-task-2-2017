@@ -26,11 +26,12 @@ def plot_topic_cumulative_recall(cr, topic, run_id, out_directory=None):
     """Plot cumulative recall for a topic"""
 
     p = plt.subplot()
-    p.plot(cr, label='cumulative recall', color='green')
-    p.set_title("Benchmark and Best Possible Strategies")
+    ranks, cr_vals = zip(*cr)
+    p.plot(ranks, cr_vals, label='cumulative recall', color='green')
+    p.set_title("Cumulative Recall (topic: {}) (run: {})".format(topic, run_id))
     p.grid(True)
-    p.set_ylabel("Normalized Portfolio Value")
-    p.set_xlabel("Date")
+    p.set_ylabel("Cumulative recall")
+    p.set_xlabel("Rank of Items Reviewed")
     p.legend(loc="upper left")
 
     filename = "chart-cr-{}-{}.png".format(topic, run_id)
@@ -42,10 +43,13 @@ def cumulative_return(topic_run, topic_qrels, debug=False):
     # cr = [(rank, cr), ...]
     cr_list = []
     cr = 0
+    print(topic_qrels['pos'])
     for docid, rank, score in topic_run:
         if docid in topic_qrels['pos']:
             cr += 1
         cr_list.append((rank, cr))
+        if debug:
+            print((rank, cr))
     return cr_list
 
 

@@ -106,7 +106,7 @@ def build_model_and_rank(pos, neg, unk, docpath, model="dectree", debug=False):
     return (unk_docids, P)
 
 
-def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, model="dectree", debug=False):
+def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, model="dectree", debug=False):
     """Run a simulation of a review for a given topic
 
     """

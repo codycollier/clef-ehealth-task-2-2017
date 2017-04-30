@@ -63,7 +63,7 @@ def load_run_file(outpath="../output/", run_id="", tag="WAX-dev"):
             # TOPIC-ID    INTERACTION    PID    RANK    SCORE    RUN-ID
             # CD009944 AF 17679360 0 100.0 Test-A
             topic, interaction, pid, rank, score, runid = parts
-            runs[topic].append((pid, rank, score))
+            runs[topic].append((pid, int(rank), float(score)))
     return runs
 
 
