@@ -22,19 +22,19 @@ def chart(filename=None, out_directory=None):
         plt.show()
 
 
-def plot_topic_cumulative_recall(cr, topic, run_id, out_directory=None):
+def plot_topic_cumulative_recall(cr, topic, run_id, phase, tag, out_directory=None):
     """Plot cumulative recall for a topic"""
 
     p = plt.subplot()
     ranks, cr_vals = zip(*cr)
     p.plot(ranks, cr_vals, label='cumulative recall', color='green')
-    p.set_title("Cumulative Recall (topic: {}) (run: {})".format(topic, run_id))
+    p.set_title("Cumulative Recall - {} - {} - {} ({})".format(topic, run_id, phase, tag))
     p.grid(True)
     p.set_ylabel("Cumulative recall")
     p.set_xlabel("Rank of Items Reviewed")
     p.legend(loc="upper left")
 
-    filename = "chart-cr-{}-{}.png".format(topic, run_id)
+    filename = "chart-cr-{}-{}-{}.png".format(tag, topic, run_id)
     chart(filename, out_directory)
 
 

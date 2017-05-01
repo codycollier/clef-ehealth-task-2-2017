@@ -12,8 +12,10 @@ import evals
 if __name__ == "__main__":
 
     #  Params
-    run_id = "Test-A"
+    run_id = "run-A"
     tag = "WAX-dev"
+    ttag = "WAX"
+    phase = "dev"
     path_docs = "../downloads/pubmed-docs-dev/"
     path_qrels = "../downloads/Training Data/qrel_abs_train"
     run_out_path = "../output/"
@@ -25,8 +27,10 @@ if __name__ == "__main__":
     # Run simulation for each topic
     for topic, topic_qrelsets in topic_qrels.iteritems():
 
+        print(topic)
+        print(type(runs))
         topic_run = runs[topic]
         cr = evals.cumulative_return(topic_run, topic_qrelsets, debug=False)
-        evals.plot_topic_cumulative_recall(cr, topic, run_id, out_directory=None)
+        evals.plot_topic_cumulative_recall(cr, topic, run_id, phase, ttag, out_directory=None)
 
         break

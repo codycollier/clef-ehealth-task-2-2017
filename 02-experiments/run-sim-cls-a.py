@@ -12,7 +12,7 @@ import core_cls
 if __name__ == "__main__":
 
     #  Params
-    run_id = "Test-A"
+    run_id = "run-A"
     tag = "WAX-dev"
     model = "dectree"
     path_docs = "../downloads/pubmed-docs-dev/"
