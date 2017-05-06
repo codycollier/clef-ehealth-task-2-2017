@@ -4,7 +4,9 @@
 
 """
 
+import os.path
 import sys
+import time
 
 import cet2_inputs
 import cet2_output
@@ -30,7 +32,7 @@ def usage(error=None):
 if __name__ == "__main__":
 
     # Incoming params
-    if not len(sys.argv) == 3:
+    if not len(sys.argv) == 5:
         usage()
     else:
         action = sys.argv[1]
@@ -52,10 +54,6 @@ if __name__ == "__main__":
     if run_id == "turtle":
         protocol = 1
         model = "dectree"
-        # run_id = "run-A"    # run-A - all pos or top N - stop 03 empty
-        # run_id = "run-A"    # run-A - all pos or top N - stop 10 empty
-        run_id = "run-B"    # run-A - all pos or top N w/ pos or random - stop 10 empty
-
     elif run_id == "crane":
         protocol = 1
         model = "dectree"
@@ -75,26 +73,56 @@ if __name__ == "__main__":
 
     # Load the docids / qrels for all topics
     topic_qrels = cet2_inputs.load_all_qrels(path_qrels)
+    total_topics = len(topic_qrels.keys())
     if action == "eval":
         runs = cet2_output.load_run_file(outpath=run_out_path, run_slug=run_slug)
 
+    # Take the designated action
     if action == "sim":
 
-        # Run simulation for each topic
-        for topic, topic_qrelsets in topic_qrels.iteritems():
+        # Don't overwrite/append data to existing file
+        outfile = os.path.join(run_out_path, "run-file-{}.txt".format(run_slug))
+        if os.path.exists(outfile):
+            raise Exception("The output run file already exists ({})".format(outfile))
 
+        # Run simulation for each topic
+        start_total = time.time()
+        for i, (topic, topic_qrelsets) in enumerate(topic_qrels.iteritems()):
+
+            # Header
+            print(":{}".format("-" * 80))
+            print(": Starting: {} - topic {} of {}".format(topic, i, total_topics))
+            print(":{}".format("-" * 80))
+
+            # Simulation
             qrel_pos_docids = topic_qrelsets['pos']
             qrel_neg_docids = topic_qrelsets['neg']
             topic_docids = topic_qrelsets['all']
+            start_sim = time.time()
 
-            # TODO - add timing
-            results = core_cls.run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs=path_docs, model=model, debug=True)
+            if run_id == "turtle":
+                results = core_cls.run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs=path_docs, model=model, debug=True)
+            elif run_id == "crane":
+                pass
             review_log, reviewed_not, reviewed_all, reviewed_pos, reviewed_neg = results
-            print("")
 
-            topic_lines = cet2_output.gen_trec_topic_run(topic, review_log, run_id=run_id, debug=True)
+            topic_lines = cet2_output.gen_trec_topic_run(topic, review_log, run_id=team_run_id, debug=False)
             cet2_output.write_run_file(topic_lines, outpath=run_out_path, run_slug=run_slug)
-            print("")
+
+            # Footer
+            elapsed_sim = time.time() - start_sim
+            elapsed_total = time.time() - start_total
+            print(":{}".format("-" * 80))
+            print(": ")
+            print(": sim time elapsed: {} seconds ({})".format(elapsed_sim, topic))
+            print(": Finished: {} - topic {} of {}".format(topic, i, total_topics))
+            print(": ")
+            print(": total time elapsed: {} seconds".format(elapsed_total))
+            print(": ")
+            print(":{}".format("-" * 80))
+
+            # debug
+            break
 
     elif action == "eval":
 
@@ -108,5 +136,7 @@ if __name__ == "__main__":
             cr = evals.cumulative_return(topic_run, topic_qrelsets, debug=False)
             evals.plot_topic_cumulative_recall(cr, topic, run_id, setname, team, out_directory=None)
 
+            # debug
+            break
 
 

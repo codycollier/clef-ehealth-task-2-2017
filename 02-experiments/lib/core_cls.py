@@ -15,9 +15,6 @@ import sys
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.tree import DecisionTreeClassifier
 
-import cet2_inputs
-import cet2_output
-
 
 def file_paths(docids, dpath):
     tdocs = []
@@ -106,7 +103,7 @@ def build_model_and_rank(pos, neg, unk, docpath, model="dectree", debug=False):
     return (unk_docids, P)
 
 
-def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, model="dectree", debug=False):
+def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, model="dectree", debug=False, debug2=False):
     """Run a simulation of a review for a given topic
 
     """
@@ -115,20 +112,22 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
     reviewed_all = set()
     reviewed_pos = set()
     reviewed_neg = set()
+    reviewed_not = set()
     review_round = 0
     empty_pos_rounds = 0
     classification = []
     keep_reviewing = True
 
     # key parameters
-    debug = True
     min_pos = 1
-    batch_count = 10
-    empty_pos_rounds_max = 10
+    review_batch_size = 10
+    initial_sample_batch_size = 100
+    # empty_pos_rounds_max = 10
 
     start = time.time()
     while keep_reviewing:
 
+        batch_size = min(len(reviewed_not), review_batch_size)
         review_round += 1
         if debug:
             print("::{}".format("-" * 80))
@@ -141,7 +140,7 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
         if review_round == 1:
             found_pos = 0
             while found_pos < min_pos:
-                reviewed_this_round.extend(random.sample(topic_docids, batch_count))
+                reviewed_this_round.extend(random.sample(topic_docids, initial_sample_batch_size))
                 for d in reviewed_this_round:
                     if d in qrel_pos_docids:
                         found_pos += 1
@@ -151,9 +150,9 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
         # In other rounds, take all the pos predictions or at least topN
         else:
             # ...top N from the list
-            topN = zip(*classification[:batch_count])[1]
-            if debug:
-                print("topN:", topN)
+            topN = zip(*classification[:batch_size])[1]
+            if debug2:
+                print(":: topN:", topN)
 
             # ...the pos predictions
             posN = [docid for pred, docid in classification if pred == 1]
@@ -162,8 +161,11 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
             else:
                 empty_pos_rounds = 0
             if debug:
-                print("posN:", posN)
+                print(":: posN:", posN)
 
+            # ------------------------------------------------
+            #  Sub protocol
+            # ------------------------------------------------
             # run-A
             # if len(posN) > len(topN):
             #     reviewed_this_round.extend(posN)
@@ -177,7 +179,8 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
                 reviewed_this_round.extend(topN)
             else:
                 rdoc = zip(*classification)[1]
-                reviewed_this_round.extend(random.sample(rdoc, batch_count))
+                reviewed_this_round.extend(random.sample(rdoc, batch_size))
+            # ------------------------------------------------
 
         # Collect the reviewed docs
         for d in reviewed_this_round:
@@ -190,33 +193,47 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
         reviewed_not = topic_docids - reviewed_all
 
         if debug:
-            print("topic_docids: {}".format(len(topic_docids)))
-            print("reviewed_not: {}".format(len(reviewed_not)))
-            print("reviewed_all: {}".format(len(reviewed_all)))
-            print("reviewed_pos: {}".format(len(reviewed_pos)))
-            print("reviewed_neg: {}".format(len(reviewed_neg)))
+            print(":: topic_docids: {}".format(len(topic_docids)))
+            print(":: reviewed_pos: {}".format(len(reviewed_pos)))
+            print(":: reviewed_neg: {}".format(len(reviewed_neg)))
+            print(":: reviewed_all: {}".format(len(reviewed_all)))
+            print(":: reviewed_not: {}".format(len(reviewed_not)))
 
-        X_unk, P = build_model_and_rank(reviewed_pos, reviewed_neg, reviewed_not, path_docs, model, debug=False)
-        classification = zip(P, X_unk)
-        classification.sort(reverse=True)
+        if len(reviewed_not) > 0:
+            X_unk, P = build_model_and_rank(reviewed_pos, reviewed_neg, reviewed_not, path_docs, model, debug=False)
+            classification = zip(P, X_unk)
+            classification.sort(reverse=True)
 
+        # ---------------------------------------------------------
         # How to determine stop and/or convergence-like state?
-        if len(reviewed_not) < batch_count:
+        #  aka Thresholding
+        #
+        #  Notes / experiments for later.
+        #  Currently I'm not planning on submitting thresholded runs
+        # ---------------------------------------------------------
+        # if len(reviewed_not) < batch_size:
+        #     keep_reviewing = False
+        #     if debug:
+        #         stop_reason = "done reviewing: less than a full batch of docs left"
+        #
+        # elif empty_pos_rounds >= empty_pos_rounds_max:
+        #     keep_reviewing = False
+        #     if debug:
+        #         stop_reason = "done reviewing: max rounds of empty positive docs in classification"
+        #
+        # No thresholding, review/rank all:
+        if len(reviewed_not) == 0:
+            stop_reason = "all docs reviewed"
             keep_reviewing = False
-            if debug:
-                print("done reviewing: less than a full batch of docs left")
-
-        elif empty_pos_rounds >= empty_pos_rounds_max:
-            keep_reviewing = False
-            if debug:
-                print(":::{}".format("-" * 80))
-                print("::: topic: {}  rounds: {}  reviewed: {} of {}".format(topic, review_round, len(reviewed_all), len(topic_docids)))
-                print("::: done reviewing: max rounds of empty positive docs in classification")
-                print("::: elapsed: {} s".format(time.time() - start))
-                print(":::{}".format("-" * 80))
+        # ---------------------------------------------------------
 
         # end of round
-        if debug:
+        if debug and not keep_reviewing:
+            print("::{}".format("-" * 80))
+            print(":: topic: {}  rounds: {}  reviewed: {} of {}".format(topic, review_round, len(reviewed_all), len(topic_docids)))
+            print(":: {}".format(stop_reason))
+            print(":: round time elapsed: {} seconds".format(time.time() - start))
+            print("::{}".format("-" * 80))
             sys.stdout.flush()
 
     # end of topic reviewing
