@@ -13,6 +13,7 @@ if __name__ == "__main__":
 
     #  Params
     run_id = "run-A"
+    run_id = "run-B"
     tag = "WAX-dev"
     ttag = "WAX"
     phase = "dev"
@@ -33,4 +34,4 @@ if __name__ == "__main__":
         cr = evals.cumulative_return(topic_run, topic_qrelsets, debug=False)
         evals.plot_topic_cumulative_recall(cr, topic, run_id, phase, ttag, out_directory=None)
 
-        break
+        # break

@@ -124,7 +124,7 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
     debug = True
     min_pos = 1
     batch_count = 10
-    empty_pos_rounds_max = 3
+    empty_pos_rounds_max = 10
 
     start = time.time()
     while keep_reviewing:
@@ -164,10 +164,20 @@ def run_sim(topic, qrel_pos_docids, qrel_neg_docids, topic_docids, path_docs, mo
             if debug:
                 print("posN:", posN)
 
+            # run-A
+            # if len(posN) > len(topN):
+            #     reviewed_this_round.extend(posN)
+            # else:
+            #     reviewed_this_round.extend(topN)
+
+            # run-B
             if len(posN) > len(topN):
                 reviewed_this_round.extend(posN)
-            else:
+            elif len(posN) > 0:
                 reviewed_this_round.extend(topN)
+            else:
+                rdoc = zip(*classification)[1]
+                reviewed_this_round.extend(random.sample(rdoc, batch_count))
 
         # Collect the reviewed docs
         for d in reviewed_this_round:

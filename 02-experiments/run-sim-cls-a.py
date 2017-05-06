@@ -12,7 +12,9 @@ import core_cls
 if __name__ == "__main__":
 
     #  Params
-    run_id = "run-A"
+    # run_id = "run-A"    # run-A - all pos or top N - stop 03 empty
+    # run_id = "run-A"    # run-A - all pos or top N - stop 10 empty
+    run_id = "run-B"    # run-A - all pos or top N w/ pos or random - stop 10 empty
     tag = "WAX-dev"
     model = "dectree"
     path_docs = "../downloads/pubmed-docs-dev/"
