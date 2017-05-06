@@ -37,22 +37,22 @@ def gen_trec_topic_run(topic, reviewed_docs, run_id, debug=False):
     return lines
 
 
-def write_run_file(topic_lines, outpath="../output/", run_id="", tag="WAX-dev"):
+def write_run_file(topic_lines, outpath="../output/", run_slug="test-run-foo"):
     """Write out the run file"""
 
     if not os.path.exists(outpath):
         raise Exception("The output path for the run file doesn't exist")
 
-    outfile = os.path.join(outpath, "run-file-{}-{}.txt".format(tag, run_id))
+    outfile = os.path.join(outpath, "run-file-{}.txt".format(run_slug))
     with open(outfile, 'a') as out:
         out.write("\n".join(topic_lines))
         out.write("\n")
 
 
-def load_run_file(outpath="../output/", run_id="", tag="WAX-dev"):
+def load_run_file(outpath="../output/", run_slug="test-run-foo"):
     """Reload the results from a run file"""
 
-    runfile = os.path.join(outpath, "run-file-{}-{}.txt".format(tag, run_id))
+    runfile = os.path.join(outpath, "run-file-{}.txt".format(run_slug))
     if not os.path.exists(runfile):
         raise Exception("The run file doesn't exist")
 
@@ -69,7 +69,6 @@ def load_run_file(outpath="../output/", run_id="", tag="WAX-dev"):
 
 if __name__ == "__main__":
 
-    # Ad hoc testing if called directly
     pass
 
 
